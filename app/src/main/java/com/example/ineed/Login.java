@@ -3,8 +3,8 @@ package com.example.ineed;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,7 +15,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import services.MyApiAdapter;
-import services.response.AccountResponse;
+import model.Account;
 
 public class Login extends AppCompatActivity {
     Button btLogin, btRegister;
@@ -40,24 +40,36 @@ public class Login extends AppCompatActivity {
     private void login() {
         // call api searching in account
         // https://butter-enormous-talon.glitch.me/accounts?email=dvaccabu@gmail.com
-        Call<List<AccountResponse>> call = MyApiAdapter.getApiService().getAccount("dvaccabu@gmail.com");
-        call.enqueue(new Callback<List<AccountResponse>>() {
+        Call<List<Account>> call = MyApiAdapter.getApiService().getAccount(edUsername.getText().toString());
+        call.enqueue(new Callback<List<Account>>() {
             @Override
-            public void onResponse(@NonNull Call<List<AccountResponse>> call, @NonNull Response<List<AccountResponse>> response) {
+            public void onResponse(@NonNull Call<List<Account>> call, @NonNull Response<List<Account>> response) {
                 if(response.isSuccessful()){
-                    List<AccountResponse> res = response.body();
+                    List<Account> res = response.body();
                     if (res == null) throw new AssertionError();
-                    AccountResponse ar = res.get(0);
-                    Toast.makeText(Login.this, ar.toString(), Toast.LENGTH_LONG).show();
+                    Account ac = res.get(0);
+                    Toast.makeText(Login.this, ac.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(Login.this, edPassword.getText().toString(), Toast.LENGTH_LONG).show();
+                    if(ac.validate(edPassword.getText().toString())){
+                        goToHome(ac);
+                    } else {
+                        Toast.makeText(Login.this, "Wrong credentials", Toast.LENGTH_LONG).show();
+                    }
                 }else {
-                    Toast.makeText(Login.this, "Test1", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Login.this, "Error in response", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<AccountResponse>> call, @NonNull Throwable t) {
-                Toast.makeText(Login.this, "Test2", Toast.LENGTH_LONG).show();
+            public void onFailure(@NonNull Call<List<Account>> call, @NonNull Throwable t) {
+                Toast.makeText(Login.this, "Fail calling service", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void goToHome(Account ac) {
+        Intent intent = new Intent(this, Search.class);
+        intent.putExtra("account", ac);
+        startActivity(intent);
     }
 }

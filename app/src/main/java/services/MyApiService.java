@@ -5,11 +5,11 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import services.response.AccountResponse;
+import model.Account;
 
 public interface MyApiService {
     @GET("accounts")
-    Call<List<AccountResponse>> getAccount(@Query("email") String username);
+    Call<List<Account>> getAccount(@Query("email") String username);
 
 //    @FormUrlEncoded
 //    @POST("upload/photo")
