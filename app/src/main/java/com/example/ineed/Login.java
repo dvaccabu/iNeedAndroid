@@ -71,5 +71,6 @@ public class Login extends AppCompatActivity {
         Intent intent = new Intent(this, Search.class);
         intent.putExtra("account", ac);
         startActivity(intent);
+
     }
 }
