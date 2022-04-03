@@ -2,7 +2,9 @@ package services;
 
 import java.util.List;
 
+import model.Category;
 import model.Customer;
+import model.Language;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -14,6 +16,12 @@ public interface MyApiService {
 
     @GET("customers")
     Call<List<Customer>> getCustomerByAccountId(@Query("acccountId") int accountId);
+
+    @GET("categories?_embed=services")
+    Call<List<Category>> getFullCategories();
+
+    @GET("languages")
+    Call<List<Language>> getLanguages();
 
 //    @FormUrlEncoded
 //    @POST("upload/photo")
