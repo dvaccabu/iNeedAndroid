@@ -5,6 +5,7 @@ import java.util.List;
 import model.Category;
 import model.Customer;
 import model.Language;
+import model.ServiceOffer;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -22,6 +23,9 @@ public interface MyApiService {
 
     @GET("languages")
     Call<List<Language>> getLanguages();
+
+    @GET("servicesoffer?_expand=serviceprovider")
+    Call<List<ServiceOffer>> getServiceProvidersByService(@Query("serviceId") int serviceId);
 
 //    @FormUrlEncoded
 //    @POST("upload/photo")

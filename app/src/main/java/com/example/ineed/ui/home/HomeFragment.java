@@ -1,28 +1,33 @@
 package com.example.ineed.ui.home;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.ineed.R;
 import com.example.ineed.databinding.FragmentHomeBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import model.Account;
 import model.Category;
 import model.Language;
 import model.Service;
+import model.ServiceOffer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,8 +36,11 @@ import services.MyApiAdapter;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private Button btSearch;
+    private ListView lvResults;
     private Spinner spServiceType, spService, spLanguage;
     List<Category> categories;
+    List<ServiceOffer> result = new ArrayList<ServiceOffer>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +60,9 @@ public class HomeFragment extends Fragment {
         spServiceType = binding.spServiceType;
         spService = binding.spService;
         spLanguage = binding.spLanguage;
+        btSearch = binding.btSearch;
+        lvResults = binding.lvResults;
+
         this.loadServiceTypes(container);
         this.loadLanguages(container);
         spServiceType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -63,6 +74,44 @@ public class HomeFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        btSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchServiceProviders(container);
+            }
+        });
+    }
+
+    private void searchServiceProviders(ViewGroup container) {
+        // servicesoffer?_expand=serviceprovider&serviceId=2
+        result.clear();
+        int serviceId = ((Service)spService.getSelectedItem()).getId();
+        int languageId = ((Language)spLanguage.getSelectedItem()).getId();
+        Call<List<ServiceOffer>> call = MyApiAdapter.getApiService().getServiceProvidersByService(serviceId);
+        call.enqueue(new Callback<List<ServiceOffer>>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onResponse(@NonNull Call<List<ServiceOffer>> call, @NonNull Response<List<ServiceOffer>> response) {
+                if(response.isSuccessful()){
+                    List<ServiceOffer> so = response.body();
+                    if (so == null) throw new AssertionError();
+                    for (ServiceOffer serviceOffer: so) {
+                        if (serviceOffer.getServiceprovider().getServicelanguages().contains(languageId)) {
+                            result.add(serviceOffer);
+                        }
+                    }
+                    loadResults(container);
+                }else {
+                    Toast.makeText(container.getContext(), "Error in response", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<ServiceOffer>> call, @NonNull Throwable t) {
+                Toast.makeText(container.getContext(), "Fail calling service", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -119,8 +168,9 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void loadResults() {
-
+    private void loadResults(ViewGroup container) {
+        ArrayAdapter<ServiceOffer> resultAdapter = new ArrayAdapter<ServiceOffer>(container.getContext(), android.R.layout.simple_list_item_1, result);
+        lvResults.setAdapter(resultAdapter);
     }
 
     @Override

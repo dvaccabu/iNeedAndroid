@@ -8,7 +8,6 @@ public class Customer {
     String address;
     int accountId;
 
-
     @Override
     public String toString() {
         return "Customer{" +
