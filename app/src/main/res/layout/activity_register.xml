@@ -57,13 +57,13 @@
         android:id="@+id/edUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
         android:hint="Username"
-        app:layout_constraintTop_toBottomOf="@id/edLastName"
-        app:layout_constraintRight_toRightOf="parent"
+        android:inputType="textEmailAddress"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="30dp"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edLastName" />
 
     <EditText
         android:id="@+id/edPassword"

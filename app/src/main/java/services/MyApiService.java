@@ -7,7 +7,10 @@ import model.Customer;
 import model.Language;
 import model.ServiceOffer;
 import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 import model.Account;
 
@@ -15,8 +18,23 @@ public interface MyApiService {
     @GET("accounts")
     Call<List<Account>> getAccount(@Query("email") String username);
 
+    @FormUrlEncoded
+    @POST("accounts")
+    Call<Account> postNewAccount(
+            @Field("email") String email,
+            @Field("password") String password
+    );
+
     @GET("customers")
-    Call<List<Customer>> getCustomerByAccountId(@Query("acccountId") int accountId);
+    Call<List<Customer>> getCustomerByAccountId(@Query("accountId") int accountId);
+
+    @FormUrlEncoded
+    @POST("customers")
+    Call<Customer> postNewCustomer(
+            @Field("fname") String fname,
+            @Field("lname") String lname,
+            @Field("accountId") int accountId
+    );
 
     @GET("categories?_embed=services")
     Call<List<Category>> getFullCategories();
@@ -26,26 +44,4 @@ public interface MyApiService {
 
     @GET("servicesoffer?_expand=serviceprovider")
     Call<List<ServiceOffer>> getServiceProvidersByService(@Query("serviceId") int serviceId);
-
-//    @FormUrlEncoded
-//    @POST("upload/photo")
-//    Call<SimpleResponse> postPhoto(
-//            @Field("image") String base64,
-//            @Field("extension") String extension,
-//            @Field("user_id") String user_id
-//    );
-//
-//    @GET("login")
-//    Call<LoginResponse> getLogin(
-//            @Query("username") String username,
-//            @Query("password") String password
-//    );
-//
-//    @FormUrlEncoded
-//    @POST("product")
-//    Call<SimpleResponse> postNewProduct(
-//            @Field("code") String code,
-//            @Field("name") String name,
-//            @Field("description") String description
-//    );
 }

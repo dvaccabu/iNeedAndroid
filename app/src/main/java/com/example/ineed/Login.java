@@ -60,8 +60,6 @@ public class Login extends AppCompatActivity {
                     List<Account> res = response.body();
                     if (res == null) throw new AssertionError();
                     Account ac = res.get(0);
-                    Toast.makeText(Login.this, ac.toString(), Toast.LENGTH_LONG).show();
-                    Toast.makeText(Login.this, edPassword.getText().toString(), Toast.LENGTH_LONG).show();
                     if(ac.validate(edPassword.getText().toString())){
                         goToHome(ac);
                     } else {

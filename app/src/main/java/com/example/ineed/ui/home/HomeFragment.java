@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,8 @@ public class HomeFragment extends Fragment {
     private Button btSearch;
     private ListView lvResults;
     private Spinner spServiceType, spService, spLanguage;
+    private TextView tvCurrentDistance;
+    private SeekBar sbDistance;
     List<Category> categories;
     List<ServiceOffer> result = new ArrayList<ServiceOffer>();
 
@@ -62,6 +65,8 @@ public class HomeFragment extends Fragment {
         spLanguage = binding.spLanguage;
         btSearch = binding.btSearch;
         lvResults = binding.lvResults;
+        tvCurrentDistance = binding.tvCurrentDistance;
+        sbDistance = binding.sbDistance;
 
         this.loadServiceTypes(container);
         this.loadLanguages(container);
@@ -73,6 +78,27 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        tvCurrentDistance.setText(""+5);
+        sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                i = i / 5;
+                i = i * 5;
+                tvCurrentDistance.setText(String.valueOf(i+5));
+                seekBar.setProgress(i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
