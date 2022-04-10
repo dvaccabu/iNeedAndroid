@@ -3,7 +3,9 @@ package com.example.ineed;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,16 +40,14 @@ public class Login extends AppCompatActivity {
         btLogin.setOnClickListener(view -> login());
 
 
-        btRegister.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v)
-            {
+        btRegister.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 Intent intent = new Intent(Login.this, Register.class);
                 startActivity(intent);
             }
         });
 
     }
-
 
 
     private void login() {
@@ -56,16 +57,20 @@ public class Login extends AppCompatActivity {
         call.enqueue(new Callback<List<Account>>() {
             @Override
             public void onResponse(@NonNull Call<List<Account>> call, @NonNull Response<List<Account>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     List<Account> res = response.body();
                     if (res == null) throw new AssertionError();
                     Account ac = res.get(0);
-                    if(ac.validate(edPassword.getText().toString())){
+                    if (ac.validate(edPassword.getText().toString())) {
+                        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("MY_SHARED_PREF", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt("account_id", ac.getId());
+                        editor.apply();
                         goToHome(ac);
                     } else {
                         Toast.makeText(Login.this, "Wrong credentials", Toast.LENGTH_LONG).show();
                     }
-                }else {
+                } else {
                     Toast.makeText(Login.this, "Error in response", Toast.LENGTH_LONG).show();
                 }
             }

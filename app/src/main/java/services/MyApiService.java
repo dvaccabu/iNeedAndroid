@@ -2,9 +2,11 @@ package services;
 
 import java.util.List;
 
+import model.Booking;
 import model.Category;
 import model.Customer;
 import model.Language;
+import model.Service;
 import model.ServiceOffer;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -27,6 +29,12 @@ public interface MyApiService {
 
     @GET("customers")
     Call<List<Customer>> getCustomerByAccountId(@Query("accountId") int accountId);
+
+    @GET("bookings")
+    Call<List<Booking>> getBookingsByAccountId(@Query("accountId") int accountId);
+
+    @GET("service")
+    Call<Service> getService(@Query("serviceId") int serviceID);
 
     @FormUrlEncoded
     @POST("customers")
