@@ -59,7 +59,7 @@ public class Login extends AppCompatActivity {
             public void onResponse(@NonNull Call<List<Account>> call, @NonNull Response<List<Account>> response) {
                 if (response.isSuccessful()) {
                     List<Account> res = response.body();
-                    if (res == null) throw new AssertionError();
+                    if (res == null || res.size()==0) throw new AssertionError();
                     Account ac = res.get(0);
                     if (ac.validate(edPassword.getText().toString())) {
                         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("MY_SHARED_PREF", Context.MODE_PRIVATE);

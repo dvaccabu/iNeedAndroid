@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import java.util.List;
 import model.Booking;
 import model.Customer;
 import model.Service;
+import model.ServiceOffer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,7 +31,7 @@ import services.MyApiAdapter;
 public class HistoryFragment extends Fragment {
 
     private FragmentHistoryBinding binding;
-    private TextView tvServiceProviderName, tvServiceName, tvBookingDate, tvBookingStatus;
+    private ListView lvHistory;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,15 +45,12 @@ public class HistoryFragment extends Fragment {
     }
 
     private void init(ViewGroup container) {
-        tvServiceProviderName = binding.textServiceProviderName;
-        tvServiceName = binding.textSname;
-        tvBookingDate = binding.textBookingDate;
-        tvBookingStatus = binding.textBookingStatus;
-        getBookingData();
+        lvHistory = binding.lvHistory;
+        getBookingData(container);
     }
 
 
-    public void getBookingData() {
+    public void getBookingData(ViewGroup container) {
         SharedPreferences sharedPref = getActivity().getSharedPreferences("MY_SHARED_PREF", Context.MODE_PRIVATE);
         int loggedInAccountId = sharedPref.getInt("account_id", 4);//default value = 4
 
@@ -61,12 +61,8 @@ public class HistoryFragment extends Fragment {
                              if (response.isSuccessful()) {
                                  List<Booking> res = response.body();
                                  if (res != null && res.size() > 0) {
-                                     Booking booking = res.get(0);
-                                     tvBookingDate.setText(booking.getBookingDate());
-                                     tvBookingStatus.setText(booking.getState());
-//                                     tvServiceProviderName.setText(booking.getServiceproviderId());
-//                                     tvServiceName.setText(booking.getServiceId());
-//                                 getService(booking.getServiceId());
+                                     ArrayAdapter<Booking> resultAdapter = new ArrayAdapter<Booking>(container.getContext(), android.R.layout.simple_list_item_1, res);
+                                     lvHistory.setAdapter(resultAdapter);
                                  } else {
                                      Toast.makeText(getActivity(), "No data found", Toast.LENGTH_LONG).show();
                                  }
@@ -84,28 +80,4 @@ public class HistoryFragment extends Fragment {
         );
 
     }
-
-//    public void getService(int serviceId) {
-//        Call<Service> call = MyApiAdapter.getApiService().getService(serviceId);
-//        call.enqueue(new Callback<Service>() {
-//                         @Override
-//                         public void onResponse(@NonNull Call<Service> call, @NonNull Response<Service> response) {
-//                             if (response.isSuccessful()) {
-//                                 Service res = response.body();
-//                                 if (res == null) throw new AssertionError();
-//                                 tvServiceName.setText(res.getName());
-//                             } else {
-//                                 Toast.makeText(getActivity(), "Error in response", Toast.LENGTH_LONG).show();
-//                             }
-//                         }
-//
-//                         @Override
-//                         public void onFailure(@NonNull Call<Service> call, @NonNull Throwable t) {
-//                             Toast.makeText(getActivity(), "Fail calling service", Toast.LENGTH_LONG).show();
-//                         }
-//                     }
-//
-//        );
-//
-//    }
 }
